@@ -13,10 +13,12 @@ const sans = Instrument_Sans({
   display: "swap",
 });
 
+// Mono is only used for small labels, so it isn't worth competing with the headline font for bandwidth.
 const mono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-jetbrains",
   display: "swap",
+  preload: false,
 });
 
 export const viewport: Viewport = {

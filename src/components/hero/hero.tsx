@@ -204,10 +204,10 @@ export function Hero() {
               className="mt-7 text-[3.1rem] leading-[0.94] font-semibold tracking-[-0.05em] text-fg min-[390px]:text-[3.5rem] sm:text-7xl lg:text-[5.4rem]"
             >
               <span className="sr-only">{site.name}: </span>
-              <span className="boot block" style={delay(80, "--boot")}>
+              <span className="boot-rise block" style={delay(0, "--boot")}>
                 I build systems
               </span>
-              <span className="boot block" style={delay(160, "--boot")}>
+              <span className="boot-rise block" style={delay(70, "--boot")}>
                 that <span className="text-gradient pr-1">scale.</span>
               </span>
             </h1>

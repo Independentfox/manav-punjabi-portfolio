@@ -47,7 +47,7 @@ function cover(x: number, y: number) {
 
 const FLIPS: Record<Exclude<Attack, "crop">, number[]> = {
   none: [],
-  noise: [4, 13, 22, 31],
+  noise: [4, 13, 31],
   jpeg: [2, 9, 17, 26, 35],
 };
 
@@ -160,10 +160,7 @@ export function StegoPipeline() {
             {cells.map((c, i) => (
               <span
                 key={i}
-                className={cn(
-                  "relative aspect-square rounded-[2px] transition-[background-color] duration-500",
-                  c.cropped && "border border-dashed border-white/15",
-                )}
+                className={c.cropped ? "stego-px stego-px-cropped" : "stego-px"}
                 style={{
                   backgroundColor: c.cropped ? "transparent" : shade(c.l),
                 }}
@@ -189,18 +186,18 @@ export function StegoPipeline() {
           </button>
         </div>
 
-        <dl className="space-y-3 font-mono text-[11px]">
+        <div className="space-y-3 font-mono text-[11px]">
           <div>
-            <dt className="text-subtle">sent · &quot;{MESSAGE}&quot;</dt>
-            <dd className="mt-1 flex flex-wrap gap-x-1.5 text-muted">
+            <p className="text-subtle">sent · &quot;{MESSAGE}&quot;</p>
+            <p className="mt-1 flex flex-wrap gap-x-1.5 text-muted">
               {Array.from({ length: BITS.length / 8 }, (_, byte) => (
                 <span key={byte}>{BITS.slice(byte * 8, byte * 8 + 8).join("")}</span>
               ))}
-            </dd>
+            </p>
           </div>
           <div>
-            <dt className="text-subtle">received · {flipped.size} bit errors</dt>
-            <dd className="mt-1 flex flex-wrap gap-x-1.5 text-muted">
+            <p className="text-subtle">received · {flipped.size} bit errors</p>
+            <p className="mt-1 flex flex-wrap gap-x-1.5 text-muted">
               {Array.from({ length: BITS.length / 8 }, (_, byte) => (
                 <span key={byte}>
                   {received.slice(byte * 8, byte * 8 + 8).map((b, j) => (
@@ -210,19 +207,19 @@ export function StegoPipeline() {
                   ))}
                 </span>
               ))}
-            </dd>
+            </p>
           </div>
           <div className="grid grid-cols-2 gap-2 border-t border-line pt-3">
             <div>
-              <dt className="text-subtle">no ECC</dt>
-              <dd className={cn("mt-1 text-sm", flipped.size ? "text-err" : "text-fg")}>{naive}</dd>
+              <p className="text-subtle">no ECC</p>
+              <p className={cn("mt-1 text-sm", flipped.size ? "text-err" : "text-fg")}>{naive}</p>
             </div>
             <div>
-              <dt className="text-subtle">with ECC</dt>
-              <dd className="mt-1 text-sm text-ok">{MESSAGE} ✓</dd>
+              <p className="text-subtle">with ECC</p>
+              <p className="mt-1 text-sm text-ok">{MESSAGE} ✓</p>
             </div>
           </div>
-        </dl>
+        </div>
       </div>
 
       <p className="mt-4 font-mono text-[10px] leading-relaxed text-subtle">

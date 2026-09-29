@@ -57,7 +57,7 @@
     color-scheme: dark;
     background: var(--color-ink);
     color: var(--color-fg);
-    scroll-padding-top: 88px;
+    scroll-padding-top: 64px;
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -205,6 +205,17 @@
   }
 }
 
+/* Headline: moves but never starts invisible, so it is painted on the first frame (LCP). */
+@keyframes boot-rise {
+  from {
+    transform: translate3d(0, 0.22em, 0);
+    letter-spacing: -0.02em;
+  }
+  to {
+    transform: none;
+  }
+}
+
 @keyframes boot-fade {
   from {
     opacity: 0;
@@ -279,6 +290,10 @@
     animation: boot-in 0.9s var(--ease-out-expo) both;
     animation-delay: var(--boot, 0ms);
   }
+  .boot-rise {
+    animation: boot-rise 1.1s var(--ease-out-expo) both;
+    animation-delay: var(--boot, 0ms);
+  }
   .boot-fade {
     animation: boot-fade 1.2s ease-out both;
     animation-delay: var(--boot, 0ms);
@@ -344,6 +359,18 @@
   [data-shown] .draw {
     stroke-dashoffset: 0;
   }
+}
+
+/* Steganography demo pixels (112 of them — kept to one short class). */
+.stego-px {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 2px;
+  transition: background-color 0.5s;
+}
+
+.stego-px-cropped {
+  border: 1px dashed rgb(255 255 255 / 0.15);
 }
 
 /* Project visuals */

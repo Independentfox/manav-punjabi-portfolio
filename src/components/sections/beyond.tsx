@@ -7,10 +7,32 @@ import { delay } from "@/lib/utils";
 
 const TOUR = knightsTour(1, 0); // starts on b1, where a knight begins the game
 
-function RatingChart({ points }: { points: RatingPoint[] }) {
-  const W = 600;
-  const H = 250;
-  const pad = { l: 6, r: 78, t: 30, b: 24 };
+// Board squares and visit dots as single paths — two nodes instead of ~100.
+const SQUARES = Array.from({ length: 64 }, (_, i) => [i % 8, Math.floor(i / 8)])
+  .filter(([f, r]) => (f + r) % 2 === 1)
+  .map(([f, r]) => `M${f} ${r}h1v1h-1z`)
+  .join("");
+const DOTS = TOUR.map(
+  ([f, r]) => `M${f + 0.445} ${7.5 - r}a.055 .055 0 1 0 .11 0a.055 .055 0 1 0 -.11 0`,
+).join("");
+
+const CHART = {
+  wide: { W: 600, H: 250, pad: { l: 6, r: 78, t: 30, b: 24 }, font: 10 },
+  compact: { W: 340, H: 230, pad: { l: 4, r: 4, t: 34, b: 22 }, font: 11 },
+} as const;
+
+/** `compact` keeps labels legible on phones: narrower viewBox, tier labels inside the bands. */
+function RatingChart({
+  points,
+  variant,
+  className,
+}: {
+  points: RatingPoint[];
+  variant: keyof typeof CHART;
+  className?: string;
+}) {
+  const { W, H, pad, font } = CHART[variant];
+  const compact = variant === "compact";
   const peak = points.reduce((a, b) => (b.rating > a.rating ? b : a));
   const yMin = 200;
   const yMax = Math.max(2200, peak.rating + 150);
@@ -26,12 +48,12 @@ function RatingChart({ points }: { points: RatingPoint[] }) {
   return (
     <svg
       viewBox={`0 0 ${W} ${H}`}
-      className="h-auto w-full"
+      className={className}
       role="img"
       aria-label={`Codeforces rating history: ${points.length} rated contests, peak ${peak.rating} after ${peak.contest} (rank ${peak.rank}).`}
     >
       <defs>
-        <linearGradient id="cf-line" x1="0" x2="1">
+        <linearGradient id={`cf-line-${variant}`} x1="0" x2="1">
           <stop offset="0" stopColor="#8b7bff" />
           <stop offset="1" stopColor="#5fd8e6" />
         </linearGradient>
@@ -61,13 +83,13 @@ function RatingChart({ points }: { points: RatingPoint[] }) {
               strokeOpacity={0.18}
               strokeDasharray="2 4"
             />
-            {bottom - top > 14 ? (
+            {bottom - top > 14 && !(compact && tier.min < 1200) ? (
               <text
-                x={W - pad.r + 8}
+                x={compact ? pad.l + 6 : W - pad.r + 8}
                 y={(top + bottom) / 2 + 3}
                 fill={tier.color}
                 fillOpacity={0.75}
-                fontSize="9.5"
+                fontSize={font - 0.5}
                 fontFamily="var(--font-mono)"
               >
                 {tier.label === "Candidate Master" ? "Cand. Master" : tier.label}
@@ -82,7 +104,7 @@ function RatingChart({ points }: { points: RatingPoint[] }) {
         return (
           <g key={yr}>
             <line x1={xx} x2={xx} y1={pad.t - 8} y2={H - pad.b} stroke="rgb(255 255 255 / 0.08)" />
-            <text x={xx + 4} y={H - 8} fill="#85859a" fontSize="10" fontFamily="var(--font-mono)">
+            <text x={xx + 4} y={H - 8} fill="#85859a" fontSize={font} fontFamily="var(--font-mono)">
               {yr}
             </text>
           </g>
@@ -92,7 +114,7 @@ function RatingChart({ points }: { points: RatingPoint[] }) {
       <path
         d={d}
         fill="none"
-        stroke="url(#cf-line)"
+        stroke={`url(#cf-line-${variant})`}
         strokeWidth="2"
         strokeLinejoin="round"
         className="draw"
@@ -112,10 +134,16 @@ function RatingChart({ points }: { points: RatingPoint[] }) {
 
       {/* Peak annotation */}
       <g transform={`translate(${x(peak.t) - 12} ${y(peak.rating) - 14})`}>
-        <text textAnchor="end" fill="#ececf1" fontSize="12" fontWeight="600" fontFamily="var(--font-mono)">
+        <text
+          textAnchor="end"
+          fill="#ececf1"
+          fontSize={font + 2}
+          fontWeight="600"
+          fontFamily="var(--font-mono)"
+        >
           {peak.rating}
         </text>
-        <text textAnchor="end" y="14" fill="#a99dff" fontSize="10" fontFamily="var(--font-mono)">
+        <text textAnchor="end" y={font + 4} fill="#a99dff" fontSize={font} fontFamily="var(--font-mono)">
           rank #{peak.rank} · +{peak.delta}
         </text>
       </g>
@@ -136,13 +164,7 @@ function KnightBoard() {
       role="img"
       aria-label={`A knight's tour: the knight visits all ${TOUR.length} squares exactly once, starting on b1, chosen with Warnsdorff's rule.`}
     >
-      {Array.from({ length: 64 }, (_, i) => {
-        const f = i % 8;
-        const r = Math.floor(i / 8);
-        return (f + r) % 2 === 1 ? (
-          <rect key={i} x={f} y={r} width={1} height={1} fill="rgb(255 255 255 / 0.045)" />
-        ) : null;
-      })}
+      <path d={SQUARES} fill="rgb(255 255 255 / 0.045)" />
       <rect x={0} y={0} width={8} height={8} fill="none" stroke="rgb(255 255 255 / 0.1)" strokeWidth={0.03} />
       <path
         d={d}
@@ -155,9 +177,7 @@ function KnightBoard() {
         style={{ ["--draw" as string]: "6s" }}
         pathLength={1}
       />
-      {TOUR.map(([f, r], i) => (
-        <circle key={i} cx={cx(f)} cy={cy(r)} r={0.055} fill="rgb(255 255 255 / 0.35)" />
-      ))}
+      <path d={DOTS} fill="rgb(255 255 255 / 0.35)" />
       <circle cx={cx(ef)} cy={cy(er)} r={0.14} fill="#5fd8e6" />
       <text
         x={cx(sf)}
@@ -229,7 +249,8 @@ export async function Beyond() {
           </dl>
 
           <div className="mt-6" data-reveal="fade" style={delay(150)}>
-            <RatingChart points={points} />
+            <RatingChart points={points} variant="compact" className="h-auto w-full sm:hidden" />
+            <RatingChart points={points} variant="wide" className="hidden h-auto w-full sm:block" />
           </div>
           <p className="mt-4 font-mono text-[10px] leading-relaxed text-subtle">
             {competitive.highlight.contest} — rank 5 worldwide. Data{" "}
