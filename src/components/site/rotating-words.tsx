@@ -18,13 +18,14 @@ export function RotatingWords({ words, interval = 2600 }: { words: string[]; int
     <>
       <span className="sr-only">{words.join(", ")}</span>
       <span aria-hidden className="relative inline-flex overflow-hidden pr-1 align-bottom">
+        {/* Slide only (no fade), clipped by the wrapper, so the word is always at full contrast. */}
         <AnimatePresence mode="popLayout" initial={false}>
           <m.span
             key={words[index]}
-            initial={{ y: "90%", opacity: 0, filter: "blur(6px)" }}
-            animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-            exit={{ y: "-90%", opacity: 0, filter: "blur(6px)" }}
-            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ y: "105%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "-105%" }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="inline-block font-serif text-[1.12em] leading-[1.15] whitespace-nowrap text-link italic"
           >
             {words[index]}
