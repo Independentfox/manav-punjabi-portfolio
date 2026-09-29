@@ -135,7 +135,11 @@ export function ModelBracket() {
                   </span>
                   <span className="block font-mono text-[11px] text-subtle">{model.note}</span>
                 </span>
-                <span className="flex gap-1.5" aria-label={`Evaluated at ${forecasting.horizons.join(", ")}`}>
+                <span
+                  role="img"
+                  className="flex gap-1.5"
+                  aria-label={`Evaluated at ${forecasting.horizons.join(", ")}`}
+                >
                   {forecasting.horizons.map((h) => (
                     <span
                       key={h}

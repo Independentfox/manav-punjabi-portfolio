@@ -15,9 +15,9 @@ export function Metrics() {
         lede="Every number here traces back to shipped work or a public result."
       />
 
-      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-4">
+      <ul className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-4">
         {metrics.map((m, i) => (
-          <div
+          <li
             key={m.source}
             data-reveal
             style={delay(i * 60)}
@@ -28,20 +28,20 @@ export function Metrics() {
               className="absolute top-0 left-0 h-px w-0 bg-gradient-to-r from-accent to-cyan transition-[width] duration-500 group-hover:w-full"
             />
             <div className="flex items-center justify-between font-mono text-[10px] text-subtle">
-              <span>{String(i + 1).padStart(2, "0")}</span>
+              <span aria-hidden>{String(i + 1).padStart(2, "0")}</span>
               <span className="truncate pl-2 opacity-80">{m.source}</span>
             </div>
-            <div className="flex flex-col-reverse">
-              <dt className="mt-3 min-h-[2.8em] text-[13px] leading-snug text-muted sm:text-sm">{m.label}</dt>
-              <dd className="text-[2.1rem] leading-none font-semibold tracking-[-0.04em] text-fg sm:text-5xl">
+            <div>
+              <p className="text-[2.1rem] leading-none font-semibold tracking-[-0.04em] text-fg sm:text-5xl">
                 {m.prefix ? <span className="text-muted">{m.prefix}</span> : null}
                 <CountUp value={m.value} />
                 {m.suffix ? <span className="text-accent-bright">{m.suffix}</span> : null}
-              </dd>
+              </p>
+              <p className="mt-3 min-h-[2.8em] text-[13px] leading-snug text-muted sm:text-sm">{m.label}</p>
             </div>
-          </div>
+          </li>
         ))}
-      </dl>
+      </ul>
     </Section>
   );
 }
