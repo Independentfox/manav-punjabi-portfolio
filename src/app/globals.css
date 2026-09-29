@@ -330,6 +330,58 @@
   }
 }
 
+/* Line-drawing charts (rating history, knight's tour). Paths use pathLength="1". */
+.draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .draw {
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset var(--draw, 2.4s) var(--ease-in-out-quart) 0.2s;
+  }
+  [data-shown] .draw {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Project visuals */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.meter-fill {
+  width: 17%;
+  transition: width 1.6s var(--ease-in-out-quart) 0.5s;
+}
+
+[data-shown] .meter-fill,
+[data-shown].meter-fill {
+  width: 100%;
+}
+
+@media (scripting: none), (prefers-reduced-motion: reduce) {
+  .meter-fill {
+    width: 100%;
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .orbit {
+    animation: spin 14s linear infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit {
+    display: none;
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* Easter egg: blueprint mode (↑↑↓↓←→←→BA or ⌘K → "blueprint")        */
 /* ------------------------------------------------------------------ */
