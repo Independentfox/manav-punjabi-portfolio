@@ -1,5 +1,7 @@
 # Manav Punjabi — Portfolio
 
+**Live → [manav-punjabi-portfolio.vercel.app](https://manav-punjabi-portfolio.vercel.app)**
+
 Personal site of **Manav Punjabi** — software engineer working on backend systems, ML infrastructure and AI tooling (IIT Roorkee, ECE '27).
 
 It is built like a small engineering console rather than a template: every section is a system diagram, a measured result, or something you can poke at.
