@@ -4,66 +4,51 @@
 
 Personal site of **Manav Punjabi** — software engineer working on backend systems, ML infrastructure and AI tooling (IIT Roorkee, ECE '27).
 
-It is built like a small engineering console rather than a template: every section is a system diagram, a measured result, or something you can poke at.
+A deliberately minimal, single-column page: a short bio, the work that matters, and a command bar at the bottom for everything else.
 
-![Hero — desktop](docs/hero-desktop.webp)
+![Home — dark](docs/home-dark.webp)
 
 <p align="center">
-  <img src="docs/hero-mobile.webp" alt="Hero — mobile" width="300" />
+  <img src="docs/home-light.webp" alt="Home — light" width="560" />
+  &nbsp;
+  <img src="docs/home-mobile.webp" alt="Home — mobile" width="220" />
 </p>
-
-## Tech stack
-
-| Layer      | Choice                                                                          |
-| ---------- | ------------------------------------------------------------------------------- |
-| Framework  | Next.js 16 (App Router, Turbopack), React 19, TypeScript                        |
-| Styling    | Tailwind CSS 4 with design tokens in `globals.css`                              |
-| Motion     | Framer Motion (lazy-loaded features) + CSS keyframes for anything pre-hydration |
-| Icons      | Lucide, plus inline brand marks                                                 |
-| Fonts      | Instrument Sans + JetBrains Mono via `next/font`                                |
-| OG / icons | `next/og` `ImageResponse`, generated at build time                              |
-| Quality    | ESLint (flat config), Prettier + Tailwind class sorting, `tsc --noEmit`         |
-| Hosting    | Vercel                                                                          |
-
-No Three.js: the diagrams are SVG and CSS, which gave the same "system coming online" feel at a fraction of the bundle cost.
 
 ## Features
 
-- **Boot-sequence hero** with a live console (`help`, `whoami`, `open github`, `sudo hire manav`, …) and an animated user → product system trace.
-- **Experience as case studies** — an expandable recommendation-pipeline architecture (Glance), a production status console (Airblack) and an interactive steganography channel simulation (NOOS).
-- **Project case studies** — the self-correcting agent loop, a model benchmark bracket and a two-lane RAG diagram, plus an explorer for smaller builds.
-- **Across-the-stack map** — filter by any role or project to see which layers (algorithms → production) it touches.
-- **Live Codeforces rating history** from the public API (refreshed daily, with a verified snapshot fallback) and a knight's tour generated with Warnsdorff's rule.
-- **Command palette** — `⌘K` / `Ctrl K`, full keyboard navigation, focus management.
-- **Details** — scroll reveals that respect `prefers-reduced-motion` and still render without JavaScript, a subtle cursor on fine pointers only, a floating contact dock, blueprint mode (↑↑↓↓←→←→BA), and a note for anyone who opens DevTools.
-- **SEO** — metadata, canonical URL, Open Graph/Twitter cards, JSON-LD `Person`, sitemap, robots and web manifest.
+- **Command bar** — pinned to the bottom. Type `/` (or press `/` / `⌘K` anywhere) for `/about`, `/experience`, `/projects`, `/achievements`, `/cp`, `/stack`, `/contact` and `/resume`. Plain questions like _"where have you worked?"_ are routed to the closest command. It's deliberately not an AI — no API key, no cost.
+- **Light & dark themes** — dark by default, remembered per visitor, no flash on load.
+- **Experience accordion** with animated height (CSS grid rows, no JS measuring).
+- **Live Codeforces card** — rating history and problems solved from the public API, refreshed daily, with a verified snapshot fallback.
+- **Details** — a rotating serif tagline, a waving hand, scroll reveals that respect `prefers-reduced-motion` and still render without JavaScript.
+- **SEO** — metadata, canonical URL, generated Open Graph/Twitter card, JSON-LD `Person`, sitemap, robots and web manifest.
 
-## Architecture
+## Tech stack
+
+| Layer      | Choice                                                                   |
+| ---------- | ------------------------------------------------------------------------ |
+| Framework  | Next.js 16 (App Router, Turbopack), React 19, TypeScript                 |
+| Styling    | Tailwind CSS 4, theme tokens as CSS variables in `globals.css`           |
+| Motion     | CSS keyframes + Framer Motion (lazy-loaded) for the tagline and toasts   |
+| Fonts      | Figtree, Instrument Serif (italic accents), Geist Mono — via `next/font` |
+| OG / icons | `next/og` `ImageResponse`, generated at build time                       |
+| Quality    | ESLint, Prettier + Tailwind class sorting, `tsc --noEmit`                |
+| Hosting    | Vercel — every push to `main` deploys                                    |
+
+## Structure
 
 ```
 src/
-├─ app/                    routes + file-based metadata
-│  ├─ layout.tsx           fonts, metadata, global chrome
-│  ├─ page.tsx             section composition (server component, ISR: 1 day)
-│  ├─ opengraph-image.tsx  OG/Twitter card (next/og), fonts in _og/
-│  ├─ icon.svg, apple-icon.tsx, favicon.ico
-│  └─ robots.ts, sitemap.ts, manifest.ts, not-found.tsx
-├─ content/site.ts         every fact on the site, in one typed file
+├─ app/                     page, layout, metadata routes (OG, icons, sitemap, robots, manifest)
+├─ content/site.ts          every fact on the site, in one typed file
 ├─ components/
-│  ├─ chrome/              navbar, command palette, cursor, reveal observer, toasts
-│  ├─ hero/                hero + interactive console
-│  ├─ sections/            one file per section (server components)
-│  ├─ visuals/             interactive diagrams (client components)
-│  └─ ui/                  primitives and icons
-└─ lib/                    site URL, hooks, Codeforces client, knight's tour
+│  ├─ site/                 command bar, experience accordion, Codeforces card, theme toggle
+│  ├─ chrome/               reveal observer, toasts, motion provider, analytics
+│  └─ ui/icons.tsx          brand marks
+└─ lib/                     Codeforces client, site URL, hooks
 ```
 
-Design decisions:
-
-- **Server-first.** Sections are server components; only the pieces that react to input are client components.
-- **One reveal observer.** Server markup opts into scroll reveals with a `data-reveal` attribute; a single `IntersectionObserver` shows them. Content is only hidden under `@media (scripting: enabled)`, so it never disappears without JS.
-- **LCP-safe hero.** The headline animates by transform only, so it paints on the first frame.
-- **Content is data.** `src/content/site.ts` is the single source of truth. Every metric in it traces back to the resume, a public repository or the Codeforces API.
+`src/content/site.ts` is the single source of truth. Every metric in it traces back to the resume, a public repository or the Codeforces API.
 
 ## Local development
 
@@ -76,28 +61,21 @@ npm run typecheck    # tsc --noEmit
 npm run format       # Prettier
 ```
 
-Optional environment variables are documented in [`.env.example`](.env.example).
+Optional environment variables are documented in [`.env.example`](.env.example):
 
-## Deployment
-
-The site deploys to Vercel from `main`. No configuration is required:
-
-- `VERCEL_PROJECT_PRODUCTION_URL` is picked up automatically for canonical URLs, the sitemap and OG tags.
-- Set `NEXT_PUBLIC_SITE_URL` once a custom domain is attached.
-- Set `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` to enable cookie-free analytics; nothing loads otherwise.
+- `NEXT_PUBLIC_SITE_URL` — set once a custom domain is attached (Vercel's production URL is used otherwise).
+- `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` — enables cookie-free analytics; nothing loads without it.
 
 To regenerate `favicon.ico` after editing `src/app/icon.svg`: `node scripts/generate-favicon.mjs`.
 
 ## Performance
 
-Lighthouse 13 against a local production build (`next start`):
+Lighthouse 13 against a production build:
 
 | Profile | Performance | Accessibility | Best Practices | SEO |
 | ------- | ----------- | ------------- | -------------- | --- |
 | Desktop | 100         | 100           | 100            | 100 |
-| Mobile  | 93–94       | 100           | 100            | 100 |
-
-Mobile runs use Lighthouse's simulated slow-4G throttling. CLS ≤ 0.03, TBT ≤ 60 ms.
+| Mobile  | 95          | 100           | 100            | 100 |
 
 ## Contact
 
