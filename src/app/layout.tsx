@@ -1,29 +1,39 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Sans, JetBrains_Mono } from "next/font/google";
+import { Figtree, Geist_Mono, Instrument_Serif } from "next/font/google";
 import { Analytics } from "@/components/chrome/analytics";
-import { ClientChrome } from "@/components/chrome/client-chrome";
 import { MotionProvider } from "@/components/chrome/motion-provider";
+import { RevealObserver } from "@/components/chrome/reveal-observer";
+import { Toaster } from "@/components/chrome/toaster";
 import { site } from "@/content/site";
 import { siteUrl } from "@/lib/site-url";
 import "./globals.css";
 
-const sans = Instrument_Sans({
+const sans = Figtree({
   subsets: ["latin"],
-  variable: "--font-instrument",
+  variable: "--font-figtree",
   display: "swap",
 });
 
-// Mono is only used for small labels, so it isn't worth competing with the headline font for bandwidth.
-const mono = JetBrains_Mono({
+const serif = Instrument_Serif({
   subsets: ["latin"],
-  variable: "--font-jetbrains",
+  weight: "400",
+  style: "italic",
+  variable: "--font-instrument-serif",
+  display: "swap",
+});
+
+const mono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
   display: "swap",
   preload: false,
 });
 
+// Runs before first paint so the stored theme never flashes. Dark is the default.
+const themeScript = `(function(){try{var t=localStorage.getItem("theme");document.documentElement.classList.toggle("dark",t?t==="dark":true)}catch(e){}})()`;
+
 export const viewport: Viewport = {
-  themeColor: "#07070b",
-  colorScheme: "dark",
+  themeColor: "#111111",
 };
 
 export const metadata: Metadata = {
@@ -41,7 +51,6 @@ export const metadata: Metadata = {
     "Software Engineer",
     "ML Infrastructure",
     "Backend Engineer",
-    "Distributed Systems",
     "Recommendation Systems",
     "AI Tooling",
     "IIT Roorkee",
@@ -75,19 +84,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${sans.variable} ${mono.variable}`}
+      className={`dark ${sans.variable} ${serif.variable} ${mono.variable}`}
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>
-        <a href="#main" className="skip-link">
-          Skip to content
-        </a>
-        <div aria-hidden className="noise" />
         <MotionProvider>
           {children}
-          <ClientChrome />
+          <Toaster />
         </MotionProvider>
+        <RevealObserver />
         <Analytics />
       </body>
     </html>

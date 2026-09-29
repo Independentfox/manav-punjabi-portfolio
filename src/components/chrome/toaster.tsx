@@ -26,19 +26,19 @@ export function Toaster() {
     <div
       aria-live="polite"
       role="status"
-      className="pointer-events-none fixed inset-x-0 bottom-24 z-[85] flex justify-center px-4 sm:bottom-8"
+      className="pointer-events-none fixed inset-x-0 top-6 z-[85] flex justify-center px-4"
     >
       <AnimatePresence>
         {message ? (
           <m.div
             key={message.id}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 6 }}
+            exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.2 }}
-            className="flex items-center gap-2.5 rounded-full border border-line-strong bg-surface-2/95 px-4 py-2.5 font-mono text-xs text-fg shadow-2xl backdrop-blur"
+            className="flex items-center gap-2.5 rounded-full border border-line-strong bg-card px-4 py-2.5 text-sm text-fg shadow-2xl"
           >
-            <span className="size-1.5 rounded-full bg-ok" aria-hidden />
+            <span className="size-1.5 rounded-full bg-peach" aria-hidden />
             {message.text}
           </m.div>
         ) : null}

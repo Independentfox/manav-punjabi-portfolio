@@ -69,6 +69,30 @@ export async function getRatingHistory(): Promise<{ points: RatingPoint[]; live:
   }
 }
 
+/** Unique problems solved (accepted at least once). Snapshot: 177 on 2026-09-30. */
+export async function getSolvedCount(): Promise<number> {
+  try {
+    const res = await fetch(`https://codeforces.com/api/user.status?handle=${site.handles.codeforces}`, {
+      next: { revalidate: 86_400 },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const body = (await res.json()) as {
+      status: string;
+      result?: { verdict?: string; problem: { contestId?: number; index: string; name: string } }[];
+    };
+    if (body.status !== "OK" || !body.result) throw new Error("bad result");
+    const solved = new Set(
+      body.result
+        .filter((s) => s.verdict === "OK")
+        .map((s) => `${s.problem.contestId ?? s.problem.name}-${s.problem.index}`),
+    );
+    return solved.size || 177;
+  } catch {
+    return 177;
+  }
+}
+
 export const CF_TIERS = [
   { min: 0, label: "Newbie", color: "#8a8a8a" },
   { min: 1200, label: "Pupil", color: "#4ade80" },
